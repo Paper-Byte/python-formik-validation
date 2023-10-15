@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useFormik } from "formik";
-import * as yup from "yup";
+import React, { useEffect, useState } from 'react';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 export const SignupForm = () => {
   const [customers, setCustomers] = useState([{}]);
   const [refreshPage, setRefreshPage] = useState(false);
@@ -8,8 +8,8 @@ export const SignupForm = () => {
   // be called when the form is submitted
 
   useEffect(() => {
-    console.log("FETCH! ");
-    fetch("/customers")
+    console.log('FETCH! ');
+    fetch('/customers')
       .then((res) => res.json())
       .then((data) => {
         setCustomers(data);
@@ -18,43 +18,41 @@ export const SignupForm = () => {
   }, [refreshPage]);
 
   const formSchema = yup.object().shape({
-    email: yup.string().email("Invalid email").required("Must enter email"),
-    name: yup.string().required("Must enter a name").max(15),
+    email: yup
+      .string()
+      .email('Invalid email')
+      .required('Must enter email'),
+    name: yup.string().required('Must enter a name').max(15),
     age: yup
       .number()
       .positive()
       .integer()
-      .required("Must enter age")
-      .typeError("Please enter an Integer")
+      .required('Must enter age')
+      .typeError('Please enter an Integer')
       .max(125),
   });
 
   const formik = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      age: "",
-    },
+    initialValues: { name: '', email: '', age: '' },
     validationSchema: formSchema,
-    onSubmit: (values) => {
-      fetch("customers", {
-        method: "POST",
+    onSubmit: async (values) => {
+      const resp = await fetch('customers', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(values, null, 2),
-      }).then((res) => {
-        if (res.status == 200) {
-          setRefreshPage(!refreshPage);
-        }
       });
+      if (resp.status === 200) {
+        setRefreshPage(!refreshPage);
+      }
     },
   });
 
   return (
     <div>
       <h1>Customer sign up form</h1>
-      <form onSubmit={formik.handleSubmit} style={{ margin: "30px" }}>
+      <form onSubmit={formik.handleSubmit} style={{ margin: '30px' }}>
         <label htmlFor="email">Email Address</label>
         <br />
         <input
@@ -63,7 +61,7 @@ export const SignupForm = () => {
           onChange={formik.handleChange}
           value={formik.values.email}
         />
-        <p style={{ color: "red" }}> {formik.errors.email}</p>
+        <p style={{ color: 'red' }}> {formik.errors.email}</p>
         <label htmlFor="name">Name</label>
         <br />
 
@@ -73,7 +71,7 @@ export const SignupForm = () => {
           onChange={formik.handleChange}
           value={formik.values.name}
         />
-        <p style={{ color: "red" }}> {formik.errors.name}</p>
+        <p style={{ color: 'red' }}> {formik.errors.name}</p>
 
         <label htmlFor="age">age</label>
         <br />
@@ -84,17 +82,17 @@ export const SignupForm = () => {
           onChange={formik.handleChange}
           value={formik.values.age}
         />
-        <p style={{ color: "red" }}> {formik.errors.age}</p>
+        <p style={{ color: 'red' }}> {formik.errors.age}</p>
         <button type="submit">Submit</button>
       </form>
-      <table style={{ padding: "15px" }}>
+      <table style={{ padding: '15px' }}>
         <tbody>
           <tr>
             <th>name</th>
             <th>email</th>
             <th>age</th>
           </tr>
-          {customers === "undefined" ? (
+          {customers === 'undefined' ? (
             <p>Loading</p>
           ) : (
             customers.map((customer, i) => (
